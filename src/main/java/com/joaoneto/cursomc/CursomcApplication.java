@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.joaoneto.cursomc.domain.Categoria;
 import com.joaoneto.cursomc.domain.Cidade;
+import com.joaoneto.cursomc.domain.Cliente;
+import com.joaoneto.cursomc.domain.Endereco;
 import com.joaoneto.cursomc.domain.Estado;
 import com.joaoneto.cursomc.domain.Produto;
+import com.joaoneto.cursomc.domain.enums.TipoCliente;
 import com.joaoneto.cursomc.repositories.CategoriaRepository;
 import com.joaoneto.cursomc.repositories.CidadeRepository;
+import com.joaoneto.cursomc.repositories.ClienteRepository;
+import com.joaoneto.cursomc.repositories.EnderecoRepository;
 import com.joaoneto.cursomc.repositories.EstadoRepository;
 import com.joaoneto.cursomc.repositories.ProdutoRepository;
 
@@ -20,13 +25,17 @@ import com.joaoneto.cursomc.repositories.ProdutoRepository;
 public class CursomcApplication implements CommandLineRunner {
 	
 	@Autowired
-	CategoriaRepository categoriaRepository;
+	private CategoriaRepository categoriaRepository;
 	@Autowired
-	ProdutoRepository produtoRepository;
+	private ProdutoRepository produtoRepository;
 	@Autowired
-	EstadoRepository estadoRepository;
+	private EstadoRepository estadoRepository;
 	@Autowired
-	CidadeRepository cidadeRespository;
+	private CidadeRepository cidadeRespository;
+	@Autowired
+	private ClienteRepository clienteRepository;
+	@Autowired
+	private EnderecoRepository enderecoRespository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -71,6 +80,22 @@ public class CursomcApplication implements CommandLineRunner {
 		
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRespository.saveAll(Arrays.asList(c1, c2, c3));
+		
+		//Cria (popula o BD) os clientes ao iniciar o programa.
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		
+		//Cria os telefones e faz o relacionamento nos clientes
+		cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+		
+		//Cria (popula o BD) os enderecos ao iniciar o programa.
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+		
+		//Faz o relacionamento de endereços nos clientes
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRespository.saveAll(Arrays.asList(e1, e2));
 		
 	}
 	
